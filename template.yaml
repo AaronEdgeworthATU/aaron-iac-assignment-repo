@@ -28,3 +28,17 @@ Resources:
       CidrBlock: 10.0.0.0/24
       EnableDnsSupport: true
       EnableDnsHostnames: true
+
+# Defining a bucket policy to ensure that the S3 Buckets contents can only be accessed by the CloudFront distribution.
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MyS3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+          # Will need to include the CloudFront Distro here when it's created
+            Principal:
+              AWS: !Sub 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${MyCloudFrontOAI}'
+            Action: 's3:GetObject'
+            Resource: !Sub '${MyS3Bucket.Arn}/*'
