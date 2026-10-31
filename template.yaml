@@ -10,3 +10,21 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Name
+          Value: MyS3Bucket
+        - Key: Info
+          Value: Stores my index.html file
+
+  # Create a Virtual Private Cloud to secure who can access the S3 bucket. Will need to create subnets & route tables later
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/24
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
