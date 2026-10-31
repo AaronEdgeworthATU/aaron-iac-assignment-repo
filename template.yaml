@@ -1,7 +1,7 @@
 Description: Template for the IaC Continous assessment assignment 1
 AWSTemplateFormatVersion: 2010-09-09
-Resources: 
-  
+Resources:
+
   # Create an S3 Bucket for simple storage. I can use it to host my static website or store files.
   MyS3Bucket:
     Type: AWS::S3::Bucket
@@ -38,11 +38,12 @@ Resources:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
-          # Will need to include the CloudFront Distro here when it's created
+            # Will need to include the CloudFront Distro here when it's created
             Principal:
-              AWS: !Sub 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${MyCloudFrontOAC}'
-            Action: 's3:GetObject'
-            Resource: !Sub '${MyS3Bucket.Arn}/*'
+              AWS: !Sub arn:aws:iam::cloudfront:user/CloudFront Origin Access
+                Identity${MyCloudFrontOAC}
+            Action: s3:GetObject
+            Resource: !Sub ${MyS3Bucket.Arn}/*
 
   # I believe the cloudfront distribution is required so that the S3 bucket can only be accessed through the cloudfront distribution.
   MyCloudFrontDistribution:
@@ -52,9 +53,9 @@ Resources:
         Enabled: true
         Origins:
           - Id: MyS3Origin
-            DomainName: !GetAtt MyS3Bucket.DomainName
+            DomainName: !GetAtt MyS3Bucket.RegionalDomainName
             S3OriginConfig:
-              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${MyCloudFrontOAC}'
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${MyCloudFrontOAC}
         DefaultCacheBehavior:
           TargetOriginId: MyS3Origin
           ViewerProtocolPolicy: redirect-to-https
