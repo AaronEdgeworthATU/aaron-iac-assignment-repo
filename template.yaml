@@ -1,4 +1,4 @@
-Description: Template for the IaC Continous assessment assignment 1
+Description: L00205292 - Template for the IaC Continous assessment assignment 1
 AWSTemplateFormatVersion: 2010-09-09
 Resources:
 
@@ -6,7 +6,6 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      AccessControl: Private
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
@@ -40,10 +39,12 @@ Resources:
           - Effect: Allow
             # Will need to include the CloudFront Distro here when it's created
             Principal:
-              AWS: !Sub arn:aws:iam::cloudfront:user/CloudFront Origin Access
-                Identity${MyCloudFrontOAC}
+              Service: cloudfront.amazonaws.com
             Action: s3:GetObject
             Resource: !Sub ${MyS3Bucket.Arn}/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${MyCloudFrontDistribution}
 
   # I believe the cloudfront distribution is required so that the S3 bucket can only be accessed through the cloudfront distribution.
   MyCloudFrontDistribution:
@@ -54,8 +55,6 @@ Resources:
         Origins:
           - Id: MyS3Origin
             DomainName: !GetAtt MyS3Bucket.RegionalDomainName
-            S3OriginConfig:
-              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${MyCloudFrontOAC}
         DefaultCacheBehavior:
           TargetOriginId: MyS3Origin
           ViewerProtocolPolicy: redirect-to-https
@@ -69,6 +68,7 @@ Resources:
             QueryString: false
             Cookies:
               Forward: none
+        DefaultRootObject: index.html
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
 
@@ -81,3 +81,9 @@ Resources:
         SigningBehavior: always
         SigningProtocol: sigv4
         OriginAccessControlOriginType: s3
+
+Outputs:
+  SiteURL:
+    Value: !Sub https://${MyCloudFrontDistribution.DomainName}
+  BucketName:
+    Value: !Ref MyS3Bucket
