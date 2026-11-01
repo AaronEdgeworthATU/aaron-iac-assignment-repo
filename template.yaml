@@ -55,6 +55,9 @@ Resources:
         Origins:
           - Id: MyS3Origin
             DomainName: !GetAtt MyS3Bucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+            OriginAccessControlId: !Ref MyCloudFrontOAC
         DefaultCacheBehavior:
           TargetOriginId: MyS3Origin
           ViewerProtocolPolicy: redirect-to-https
@@ -71,7 +74,7 @@ Resources:
         DefaultRootObject: index.html
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
-
+          
   MyCloudFrontOAC:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
