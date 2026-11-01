@@ -107,7 +107,7 @@ Resources:
       DBInstanceClass: db.t3.micro
       Engine: mysql
       # Will need to figure out how to ensure that the RDS instance can authenticate and launch with an aws account without sharing account credentials.
-      MasterUsername: admin
+      # MasterUsername: admin
       # MasterUserPassword: !Ref MyRdsPassword
       AllocatedStorage: 20
 
@@ -126,7 +126,7 @@ Resources:
     Properties:
       DBInstanceClass: db.t3.micro
       Engine: mysql
-      MasterUsername: admin
+      # MasterUsername: admin
       # MasterUserPassword: !Ref MyRdsPassword
       
       # Adding MultiAZ to the RDS instance to ensure that it is highly available and can failover to the other availability zone in case of an outage. Even if the availability zone goes down it will still be able to serve traffic from the other availability zone.
