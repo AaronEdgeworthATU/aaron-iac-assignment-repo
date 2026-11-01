@@ -6,9 +6,6 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: error.html
         # For security reasons, public access to the bucket is blocked. all access to the bucket need to be through the CloudFront distribution.
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
@@ -22,6 +19,7 @@ Resources:
           Value: Stores my index.html file
 
   # Create a Virtual Private Cloud to secure who can access the S3 bucket. Will need to create subnets & route tables later
+  # Dont believe the above was correct. VPC is requried for Part (b) of the assignment, but not for part (a). I will leave it in for now, but will remove it if I don't need it.
   MyVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -86,7 +84,7 @@ Resources:
         SigningBehavior: always
         SigningProtocol: sigv4
         OriginAccessControlOriginType: s3
-
+# the url to the site and the bucket name are outputted so that they can be used accessed after a successful stack deployment.
 Outputs:
   SiteURL:
     Value: !Sub https://${MyCloudFrontDistribution.DomainName}
