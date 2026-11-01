@@ -1,6 +1,20 @@
 Description: L00205292 - Aaron Edgeworth - Template for the Three Tier
   Architecture assignment 1(b)
 AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+
+  # Establishing the two availability zones that will be used for the private application and database subnets. This will ensure that if one availability zone goes down, the other can still serve traffic.
+  MyAvailabilityZone1:
+    Type: String
+    Description: The name of the first Availability Zone (e.g., eu-west-1a)
+    Default: eu-west-1a
+
+  MyAvailabilityZone2:
+    Type: String
+    Description: The name of the second Availability Zone (e.g., eu-west-1b)
+    Default: eu-west-1b
+
 Resources:
 
   # Create an S3 Bucket for simple storage. I can use it to host my static website or store files.
@@ -46,10 +60,40 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MyVPC
-      CidrBlock: 10.0.16.0/24
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: !Ref MyAvailabilityZone1
 
   MyPrivateAppSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MyVPC
-      CidrBlock: 10.0.17.0/24
+      CidrBlock: 10.0.21.0/24
+      AvailabilityZone: !Ref MyAvailabilityZone2
+
+  MyPrivateDatabaseSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.12.0/24
+      AvailabilityZone: !Ref MyAvailabilityZone1
+
+  MyPrivateDatabaseSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.22.0/24
+      AvailabilityZone: !Ref MyAvailabilityZone2
+
+  MyPrivateWebSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.13.0/24
+      AvailabilityZone: !Ref MyAvailabilityZone1
+
+  MyPrivateWebSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.23.0/24
+      AvailabilityZone: !Ref MyAvailabilityZone2
