@@ -9,6 +9,7 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
+        # For security reasons, public access to the bucket is blocked. all access to the bucket need to be through the CloudFront distribution.
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -46,7 +47,7 @@ Resources:
               StringEquals:
                 AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${MyCloudFrontDistribution}
 
-  # I believe the cloudfront distribution is required so that the S3 bucket can only be accessed through the cloudfront distribution.
+  # The CloudFront distribution is created to serve the content of the S3 bucket securely. It will use an Origin Access Control (OAC) to restrict access to the S3 bucket.
   MyCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -74,7 +75,8 @@ Resources:
         DefaultRootObject: index.html
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
-          
+
+# Cloud Front OAC is applied and only allows connections from CloudFront to the bucket
   MyCloudFrontOAC:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
