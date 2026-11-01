@@ -97,3 +97,38 @@ Resources:
       VpcId: !Ref MyVPC
       CidrBlock: 10.0.23.0/24
       AvailabilityZone: !Ref MyAvailabilityZone2
+      
+# Will use amazon RDS to store the index.html file for retrieval by the application servers. 
+# The RDS instance will be created in the private database subnets to ensure that it is not publicly accessible.
+
+  MyRdsService1:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.t3.micro
+      Engine: mysql
+      # Will need to figure out how to ensure that the RDS instance can authenticate and launch with an aws account without sharing account credentials.
+      MasterUsername: admin
+      # MasterUserPassword: !Ref MyRdsPassword
+      AllocatedStorage: 20
+
+      # This is causing issues. I will need to create a security group for the RDS instance to allow access from the application servers. I will also need to create a DB subnet group to ensure that the RDS instance is created in the private database subnets.
+      #
+      # VPCSecurityGroups:
+      #   - !GetAtt MyPrivateDatabaseSubnet1.GroupId
+      # DBSubnetGroupName: !Ref MyPrivateDatabaseSubnet1
+      
+      # Adding MultiAZ to the RDS instance to ensure that it is highly available and can failover to the other availability zone in case of an outage. Even if the availability zone goes down it will still be able to serve traffic from the other availability zone.
+      MultiAZ: true
+      PubliclyAccessible: false
+
+  MyRdsService2:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.t3.micro
+      Engine: mysql
+      MasterUsername: admin
+      # MasterUserPassword: !Ref MyRdsPassword
+      
+      # Adding MultiAZ to the RDS instance to ensure that it is highly available and can failover to the other availability zone in case of an outage. Even if the availability zone goes down it will still be able to serve traffic from the other availability zone.
+      MultiAZ: true
+      PubliclyAccessible: false
