@@ -14,3 +14,5 @@ Correction to the earlier note about the "Bucket:" property. It is on the bucket
 Looked into the OAC issue. The stack creates fine but visiting the CloudFront URL gave an Access Denied error. I think the cause is that CloudFormation does not upload files, so the bucket had no index.html in it. Will need to upload the index.html manually after the stack deployment.
 
 I removed WebsiteConfiguration, because it is for the public S3 website endpoint and Im now using Cloudfront and OAC to access. I dont believe I need the VPC for the static website host.
+
+Uploading the new yaml file to include the skeleton of the three tier architecture. Initally establishing the VPC that I had unnessisarily included in the static website yaml template. The VPC is being established with two subets. An internet gateway is then established and configured to point to the VPC using MyAttachedGateway.

@@ -1,0 +1,55 @@
+Description: L00205292 - Aaron Edgeworth - Template for the Three Tier Architecture assignment 1(b)
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+
+  # Create an S3 Bucket for simple storage. I can use it to host my static website or store files.
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+        # For security reasons, public access to the bucket is blocked. all access to the bucket need to be through the CloudFront distribution.
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Name
+          Value: MyS3Bucket
+        - Key: Info
+          Value: Stores my index.html file
+
+  # Create a Virtual Private Cloud to secure who can access the S3 bucket. Will need to create subnets & route tables later
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+
+  # VPC requires an Internet Gateway to allow communication between the VPC and the internet.
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: InternetGateway
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref InternetGateway
+
+# For backup and redundancy, I will create two subnets in seperate availability zones. This will ensure that if one availability zone goes down, the other can still serve traffic.
+  MySubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.16.0/24
+
+  MySubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.17.0/24
+
+
