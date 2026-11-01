@@ -27,26 +27,27 @@ Resources:
       EnableDnsSupport: true
 
   # VPC requires an Internet Gateway to allow communication between the VPC and the internet.
-  InternetGateway:
+  MyInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
           Value: InternetGateway
-  AttachGateway:
+  MyAttachedGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: !Ref MyVPC
-      InternetGatewayId: !Ref InternetGateway
+      InternetGatewayId: !Ref MyInternetGateway
 
 # For backup and redundancy, I will create two subnets in seperate availability zones. This will ensure that if one availability zone goes down, the other can still serve traffic.
-  MySubnet1:
+# These subnets will be used to host the private application servers. The public facing servers will be hosted in a seperate public subnet, which will be created later.
+  MyPrivateAppSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: 10.0.16.0/24
 
-  MySubnet2:
+  MyPrivateAppSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MyVPC
