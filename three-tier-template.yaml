@@ -1,4 +1,5 @@
-Description: L00205292 - Aaron Edgeworth - Template for the Three Tier Architecture assignment 1(b)
+Description: L00205292 - Aaron Edgeworth - Template for the Three Tier
+  Architecture assignment 1(b)
 AWSTemplateFormatVersion: 2010-09-09
 Resources:
 
@@ -6,7 +7,7 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-        # For security reasons, public access to the bucket is blocked. all access to the bucket need to be through the CloudFront distribution.
+      # For security reasons, public access to the bucket is blocked. all access to the bucket need to be through the CloudFront distribution.
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -39,8 +40,8 @@ Resources:
       VpcId: !Ref MyVPC
       InternetGatewayId: !Ref MyInternetGateway
 
-# For backup and redundancy, I will create two subnets in seperate availability zones. This will ensure that if one availability zone goes down, the other can still serve traffic.
-# These subnets will be used to host the private application servers. The public facing servers will be hosted in a seperate public subnet, which will be created later.
+  # For backup and redundancy, I will create two subnets in seperate availability zones. This will ensure that if one availability zone goes down, the other can still serve traffic.
+  # These subnets will be used to host the private application servers. The public facing servers will be hosted in a seperate public subnet, which will be created later.
   MyPrivateAppSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -52,5 +53,3 @@ Resources:
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: 10.0.17.0/24
-
-
