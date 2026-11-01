@@ -1,0 +1,40 @@
+Why this architecture, and the baseline resources
+
+Why three tiers? The guide splits an application into three tiers: a web tier that handles user requests, an application tier that holds the business logic, and a data tier that stores the data. The split is useful because each component is isolated, which improves security, scalability and maintainability. In practice: 
+building a secure and scalable three tier architecture on aws using cloudformation
+ +2
+
+Security: only the web tier faces the internet. A compromised web server still can’t reach the database directly.
+Scaling: you can add more web or app servers without touching the database.
+Maintenance: you can update one tier without rebuilding the others.
+
+The guide goes further than a basic setup. It’s a high-availability design with public, private and isolated subnets across two availability zones, Auto Scaling for the application tier, and an Aurora MySQL cluster for the data tier. It also adds a firewall (WAF), a load balancer and a bastion host. That is more than an assignment needs, so I’ve split the resources into the baseline and the optional extras. 
+repost
+repost
+
+Baseline resources
+Resource	Why it’s needed
+VPC	Your private network. All three tiers live inside it.
+Public subnet(s)	Hold the internet-facing web tier.
+Private subnet(s)	Hold the app tier, with no direct route from the internet.
+Isolated/DB subnets (2 AZs)	Hold the database. RDS requires subnets in at least two availability zones.
+Internet gateway + VPC attachment	The gateway is a separate object that must be attached to the VPC before anything can reach the internet.
+Route tables + associations	A subnet is “public” only if its route table sends 0.0.0.0/0 to the internet gateway.
+Security groups (web, app, DB)	The core of the design. Each tier only accepts traffic from the tier above it. The guide does this by referencing another security group as the source rather than using IP ranges.
+Web tier compute (EC2)	Serves the front end.
+App tier compute (EC2)	Runs the application logic.
+DB subnet group + database (RDS)	The data tier.
+AMI parameter	Avoids hard-coding an image ID that changes by region. 
+repost
+Optional extras in the guide
+Application Load Balancer spreads traffic across servers and checks their health.
+Auto Scaling group + launch template replaces failed instances and adjusts capacity.
+WAF blocks common web attacks.
+Bastion host gives you admin access to private servers.
+Aurora cluster instead of a single RDS instance, for automatic failover.
+NAT gateways let private servers reach the internet.
+
+These add resilience and cost. For a simple lab, say in your README that you left them out on purpose.
+
+One security note: the guide takes the database password as a template parameter. For your own template, ManageMasterUserPassword: true is the better option because the password never appears in your repo. 
+repost
